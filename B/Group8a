@@ -1,0 +1,54 @@
+library(tidyverse)
+
+triage <- as.data.frame(read.csv("C:\\Users\\datathonadmin\\Downloads\\triagedata.csv"))
+
+
+triage <- triage %>% 
+  mutate(code = as.factor(case_when(Htriage == 1 ~ "1",
+                          Htriage == 2 ~ "2",
+                          Htriage == 3 ~ "3",
+                          Htriage == 4 ~ "4",
+                          Htriage == 5 ~ "5")))
+mod0 <- glm(new24hmrt ~ code, family = "binomial", data = sats0)
+
+exp(cbind(coef(mod0), confint(mod0)))
+mod1 <- glm(new24hmrt ~ code, family = "binomial", data = sats1)
+
+exp(cbind(coef(mod1), confint(mod1)))
+mod2 <- glm(new24hmrt ~ code, family = "binomial", data = sats2)
+
+exp(cbind(coef(mod2), confint(mod2)))
+
+table(sats0$code, sats0$new24hmrt)
+PERFORMANCE METRICS
+
+library(caret)
+non- SATS
+
+
+pred0 <- predict(mod0, newdata = sats0, type = "response")
+
+
+pred0 <- if_else(pred0 > 0.5 , 1, 0)
+confusionMatrix(data = factor(pred0), 
+                reference = factor(sats0$new24hmrt), positive = "1")
+SATS 1
+
+
+pred1 <- predict(mod1, newdata = sats1, type = "response")
+
+
+pred1 <- if_else(pred1 > 0.5 , 1, 0)
+confusionMatrix(data = factor(pred1), 
+                reference = factor(sats1$new24hmrt), positive = "1")
+SATS 2
+
+
+pred2 <- predict(mod2, newdata = sats2, type = "response")
+head(pred2)
+
+pred2 <- if_else(pred2 > 0.5 , 1, 0)
+confusionMatrix(data = factor(pred2), 
+                reference = factor(sats2$new24hmrt), positive = "1")
+
+###
